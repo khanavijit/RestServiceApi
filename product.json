@@ -1,0 +1,50 @@
+[
+	{
+		"packageId": "1",
+		"packageName": "Yousee 4 Timer",
+		"packageType": "voice",
+		"price": "100.00","featureId":"1","dataPlan":"8 GB","voicePlan":"240 min","internationalRoming":"false"
+	},
+	{
+		"packageId": "2",
+		"packageName": "Yousee 8 Timer",
+		"packageType": "voice",
+		"price": "150.00","featureId":"2","dataPlan":"12 GB","voicePlan":"480 min","internationalRoming":"false"
+	},
+	{
+		"packageId": "3",
+		"packageName": "Yousee Data 60 GB",
+		"packageType": "data",
+		"price": "100.00","featureId":"3","dataPlan":"60 GB","voicePlan":"50 min","internationalRoming":"false"
+	},
+	{
+		"packageId": "4",
+		"packageName": "Yousee Data 100 GB",
+		"packageType": "data",
+		"price": "160.00","featureId":"4","dataPlan":"100 GB","voicePlan":"100 min","internationalRoming":"false"
+	},
+	{
+		"packageId": "5",
+		"packageName": "Yousee International Basic",
+		"packageType": "international",
+		"price": "200.00","featureId":"5","dataPlan":"10 GB","voicePlan":"100 min","internationalRoming":"true"
+	},
+	{
+		"packageId": "6",
+		"packageName": "Yousee Bundle Basic",
+		"packageType": "bundle",
+		"price": "250.00","featureId":"6","dataPlan":"10 GB","voicePlan":"600 min","internationalRoming":"true"
+	},
+	{
+		"packageId": "7",
+		"packageName": "Yousee Bundle Medium",
+		"packageType": "bundle",
+		"price": "350.00","featureId":"7","dataPlan":"50 GB","voicePlan":"1200 min","internationalRoming":"true"
+	},
+	{
+		"packageId": "8",
+		"packageName": "Yousee Bundle Medium",
+		"packageType": "bundle",
+		"price": "450.00","featureId":"8","dataPlan":"100 GB","voicePlan":"1500 min","internationalRoming":"true"
+	}
+]
