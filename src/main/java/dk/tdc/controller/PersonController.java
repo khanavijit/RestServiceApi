@@ -62,6 +62,26 @@ public class PersonController {
 	}
 	
 	
+
+	@RequestMapping(method=RequestMethod.POST,value="/service/cpr/validate2")
+	public ResponseEntity<String> validatePerson2(@RequestBody PersonRequest request){
+		Person person=personService.getPersonByCpr(request.getCprNr());
+		
+		System.out.println("Request : " + request );
+		
+		System.out.println("Response : " + person );
+		
+		if (person!=null) {
+			return new ResponseEntity<String>("Validation Success", new HttpHeaders(),HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity<String>("Validation Failure",new HttpHeaders(),HttpStatus.NOT_FOUND);
+		}
+		
+	}
+	
+	
+	
 	
 	
 	

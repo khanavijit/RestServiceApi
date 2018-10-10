@@ -76,6 +76,13 @@ public List<Product> getProductsByPackageType(String packageType){
 		return productRepository.findByPackageName(packageName);
 	}
 	
+	
+	public Product getProductByPackageId(String packageId){
+		
+		return productRepository.findByPackageId(packageId);
+	}
+	
+	
 	public void addProduct(Product product){
 		productRepository.save(product);
 	}
