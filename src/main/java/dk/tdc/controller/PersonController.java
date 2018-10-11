@@ -1,17 +1,27 @@
 package dk.tdc.controller;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.core.JsonPointer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import dk.tdc.entity.Person;
 import dk.tdc.requests.PersonRequest;
@@ -43,13 +53,88 @@ public class PersonController {
 		return personService.getPersonByCpr(cprNr);
 	}
 	
-	@RequestMapping("/service/cpr/")
-	public Person getPersonByCprNr2(HttpEntity<String> httpEntity){
+	@RequestMapping(value="/service/cpr2/", method = RequestMethod.POST)
+	public ResponseEntity<String> getPersonByCprNr2(HttpEntity<String> httpEntity){
 		
-		 String reqObject = httpEntity.getBody();
-		    System.out.println("request json object = "+reqObject);
-		
-		return personService.getPersonByCpr("0709863896");
+		 	String reqObject = httpEntity.getBody();
+//		    System.out.println("request json object = "+reqObject);
+		    String cpr="";
+		    
+		    JSONParser parser = new JSONParser();
+		    JSONObject mainReq;
+		    JsonNode rootNode=null;
+			try {
+				mainReq = (JSONObject) parser.parse(reqObject);
+//				System.out.println(mainReq);
+				
+				String queryResult=String.valueOf(mainReq.get("queryResult"));
+				
+				 JSONObject qResult = (JSONObject) parser.parse(queryResult);
+				
+				String param=String.valueOf(qResult.get("parameters"));
+				
+				JSONObject paramJson = (JSONObject) parser.parse(param);
+				
+				cpr=String.valueOf(paramJson.get("cprNr"));
+				
+				System.out.println(cpr);
+				
+				Person person = personService.getPersonByCpr(cpr);
+				
+				/*System.out.println("name " + person.getFirstName());
+				
+
+				
+				ObjectMapper mapper = new ObjectMapper(); 
+				JsonNode node = mapper.convertValue(qResult, JsonNode.class);
+				
+				System.out.println(qResult);
+				
+				ObjectNode o = (ObjectNode) node;
+				o.put("fulfillmentText", "NO");
+				
+//				qResult.replace("fulfillmentText", person.getFirstName() + " " + person.getLastName());
+				
+				System.out.println(qResult);*/
+				
+				
+				
+				ObjectMapper mapper = new ObjectMapper();
+				rootNode = mapper.readTree(reqObject);    
+				JsonPointer valueNodePointer = JsonPointer.compile("/queryResult/fulfillmentText");
+				JsonPointer containerPointer = valueNodePointer.head();
+				JsonNode parentJsonNode = rootNode.at(containerPointer);
+
+				if (!parentJsonNode.isMissingNode() && parentJsonNode.isObject()) {
+				    ObjectNode parentObjectNode = (ObjectNode) parentJsonNode;
+				   
+				    String fieldName = valueNodePointer.last().toString();
+				    fieldName = fieldName.replace(Character.toString(JsonPointer.SEPARATOR), "");
+				    JsonNode fieldValueNode = parentObjectNode.get(fieldName);
+
+				    if(fieldValueNode != null) {
+				        parentObjectNode.put(fieldName, "Hi " +person.getFirstName() +" " + person.getLastName() + ", Please Choose Product!");
+				    }
+				}
+				
+				
+				System.out.println(rootNode);
+				
+				
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 
+
+			
+
+
+
+			return new ResponseEntity<String>(rootNode.toString(), new HttpHeaders(),HttpStatus.OK);
 	}
 		
 
