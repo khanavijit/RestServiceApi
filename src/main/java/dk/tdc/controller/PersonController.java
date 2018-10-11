@@ -113,18 +113,7 @@ public class PersonController {
 				
 
 				
-				ObjectMapper mapper0 = new ObjectMapper(); 
-				JsonNode node = mapper0.convertValue(qResult, JsonNode.class);
-				
-				System.out.println(qResult);
-				
-				ObjectNode o = (ObjectNode) node;
-				o.put("fulfillmentText", "NO");
-				
-//				qResult.replace("fulfillmentText", person.getFirstName() + " " + person.getLastName());
-				
-				System.out.println(qResult);
-				
+			
 				
 				
 				ObjectMapper mapper = new ObjectMapper();
@@ -170,11 +159,22 @@ public class PersonController {
 						        System.out.println(objNode);
 						    }
 						}
+
+				    	String queryResult1=String.valueOf(rootNode.get("queryResult"));
+						
+						 JSONObject qResult1 = (JSONObject) parser.parse(queryResult1);
 				    	
-				    	ObjectMapper mapper3 = new ObjectMapper();
-				    	ArrayNode array = mapper3.valueToTree(msg);
-				    	
-				    	JsonNode result =array;
+				    	ObjectMapper mapper0 = new ObjectMapper(); 
+						JsonNode node = mapper0.convertValue(qResult1, JsonNode.class);
+						
+						System.out.println(qResult);
+						
+						ObjectNode o = (ObjectNode) node;
+						o.put("fulfillmentText", "Hi " +person.getFirstName() +" " + person.getLastName() + ", Please Choose Product!");
+						
+						
+						System.out.println("dfg "+rootNode);
+						
 				    	
 				    	
 				    	
@@ -193,12 +193,13 @@ public class PersonController {
 				e.printStackTrace();
 			}
 		 
+			String tst="{\"allRequiredParamsPresent\":true,\"fulfillmentMessages\":";
+		
+			String resp="{\"speech\":\"speech Cant\",\"displayText\":\"Cant handle\",\"source\": \"game schedule\"}";
 
-			
 
 
-
-			return new ResponseEntity<String>(rootNode.toString(), new HttpHeaders(),HttpStatus.OK);
+			return new ResponseEntity<String>(resp, new HttpHeaders(),HttpStatus.OK);
 	}
 		
 
