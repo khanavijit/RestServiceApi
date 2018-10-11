@@ -46,6 +46,8 @@ public class PersonController {
 	
 	@RequestMapping(method=RequestMethod.POST,value="/service/cpr/validate")
 	public ResponseEntity<String> validatePerson(@RequestBody PersonRequest request){
+		
+		
 		Person person=personService.getPersonByCpr(request.getCprNr());
 		
 		System.out.println("Request : " + request );
