@@ -55,6 +55,125 @@ public class PersonController {
 		return personService.getPersonByCpr(cprNr);
 	}
 	
+	@RequestMapping(value="/service/cpr1/", method = RequestMethod.POST)
+	public ResponseEntity<String> getPersonByCprNr1(HttpEntity<String> httpEntity){
+		
+		 	String reqObject = httpEntity.getBody();
+		    String cpr="";
+		    
+			    
+		    
+		    JSONParser parser = new JSONParser();
+		    JSONObject mainReq;
+		    JsonNode rootNode=null;
+		    
+		    
+		    
+		    
+		    
+		    
+		    
+		    
+			try {
+				/*mapper2.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+				
+				 CprRequest obj = mapper2.readValue(reqObject, CprRequest.class);*/
+				    
+//				    System.out.println("JSON OBJECT " + obj);
+				
+				
+				mainReq = (JSONObject) parser.parse(reqObject);
+//				System.out.println(mainReq);
+				
+				String queryResult=String.valueOf(mainReq.get("result"));
+				
+				 JSONObject qResult = (JSONObject) parser.parse(queryResult);
+				
+				String param=String.valueOf(qResult.get("parameters"));
+				
+				JSONObject paramJson = (JSONObject) parser.parse(param);
+				
+				cpr=String.valueOf(paramJson.get("cprNr"));
+				
+				System.out.println(cpr);
+				
+				Person person = personService.getPersonByCpr(cpr);
+				
+				System.out.println("name " + person.getFirstName());
+				
+
+				
+				ObjectMapper mapper = new ObjectMapper();
+				rootNode = mapper.readTree(reqObject);    
+				JsonPointer valueNodePointer = JsonPointer.compile("/result/speech");
+//				JsonPointer valueNodePointer = JsonPointer.compile("/queryResult/fulfillmentMessages/0/text");
+				
+//				JSONArray jsonarray = (JSONArray) valueNodePointer.head();
+				
+				System.out.println("Avijit pointer 1" + valueNodePointer);
+				
+				JsonPointer containerPointer = valueNodePointer.head();
+				
+				System.out.println("Avijit pointer 2" + containerPointer);
+				JsonNode parentJsonNode = rootNode.at(containerPointer);
+				
+				System.out.println("Avijit pointer 3" + parentJsonNode);
+			
+				
+				if (!parentJsonNode.isMissingNode() && parentJsonNode.isObject()) {
+				    ObjectNode parentObjectNode = (ObjectNode) parentJsonNode;
+				    //following will give you just the field name. 
+				    //e.g. if pointer is /grandObject/Object/field
+				    //JsonPoint.last() will give you /field 
+				    //remember to take out the / character 
+				    String fieldName = valueNodePointer.last().toString();
+				    fieldName = fieldName.replace(Character.toString(JsonPointer.SEPARATOR), "");
+				    JsonNode fieldValueNode = parentObjectNode.get(fieldName);
+
+				    if(fieldValueNode != null) {
+				        parentObjectNode.put(fieldName, "HIIIIIIIIIIIIIIIIIIIIIIIIIIi");
+				    }
+				}
+				
+			
+				    	
+				    	
+				    	
+				 
+				
+				
+				
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 
+			String tst="{\"allRequiredParamsPresent\":true,\"fulfillmentMessages\":";
+		
+			String resp="{\"fulfillmentText\": \"This is a text response\",\"fulfillmentMessages\": [{\"card\": {\"title\": \"card title\",\"subtitle\": \"card text\",\"imageUri\": \"Molecule-Formation-stop.png\",\"buttons\": [{\"text\": \"button text\"}]}}],\"source\": \"example.com\",\"payload\": {\"google\": {\"expectUserResponse\": true,\"richResponse\": {\"items\": [{\"simpleResponse\": {\"textToSpeech\": \"this is a simple response\"}}]}},\"facebook\": {\"text\": \"Hello, Facebook!\"},\"slack\": {\"text\": \"This is a text response for Slack.\"}},\"outputContexts\": [{\"name\": \"projects/${PROJECT_ID}/agent/sessions/${SESSION_ID}/contexts/context name\",\"lifespanCount\": 5,\"parameters\": {\"param\": \"param value\"}}],\"followupEventInput\": {\"name\": \"event name\",\"languageCode\": \"en-US\",\"parameters\": {\"param\": \"param value\"}}}";
+
+			resp=resp.trim();
+			 ObjectMapper mapper2a = new ObjectMapper();
+		    ObjectReader reader = mapper2a.reader();
+		        
+			
+			  JsonNode node=null;
+			try {
+				node = reader.readTree(resp);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	            System.out.println(node.toString());
+
+			return new ResponseEntity<String>(rootNode.toString(), new HttpHeaders(),HttpStatus.OK);
+	}
+	
+	
+	
 	@RequestMapping(value="/service/cpr2/", method = RequestMethod.POST)
 	public ResponseEntity<String> getPersonByCprNr2(HttpEntity<String> httpEntity){
 		
