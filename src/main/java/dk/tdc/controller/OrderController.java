@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import dk.tdc.entity.Order;
 import dk.tdc.entity.OrderItem;
 import dk.tdc.entity.Person;
+import dk.tdc.entity.Product;
 import dk.tdc.requests.CartItem;
 import dk.tdc.requests.OrderRequest;
 import dk.tdc.service.OrderService;
@@ -63,18 +64,30 @@ public class OrderController {
 		Person person=personService.getPersonByCpr(orderRequest.getCprNr());
 		
 		
+		
+		if(person==null) {
+			return new ResponseEntity<String>("Order Failed - Invalid Person " , new HttpHeaders(),HttpStatus.NOT_FOUND);
+		}
+		
+		
 		for(CartItem ci:orderRequest.getCartItems()) {
 			
 			OrderItem orderItem = new OrderItem();
-			orderItem.setProduct(productService.getProductByPackageId(ci.getPackageId()));
+			Product product=productService.getProductByPackageId(ci.getPackageId());
+			if(product==null) {
+				return new ResponseEntity<String>("Order Failed - Invalid Product " , new HttpHeaders(),HttpStatus.NOT_FOUND);
+			}
+			
+			orderItem.setProduct(product);
 			order.addOrderItems(orderItem);
 		}	
 		
 		order.setPerson(person);
+		order.setOrderStatus("Created");
 		
 		String orderNr=orderService.addOrder(order);
 		
-		return new ResponseEntity<String>("Order Created - " + orderNr, new HttpHeaders(),HttpStatus.OK);
+		return new ResponseEntity<String>("Order Created - " + orderNr, new HttpHeaders(),HttpStatus.CREATED);
 	}
 	
 	

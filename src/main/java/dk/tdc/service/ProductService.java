@@ -120,11 +120,6 @@ public List<Product> getProductsByPackageType(String packageType){
 		          
 		            prd.setInternationalRoming(Boolean.parseBoolean(String.valueOf(jsonObject.get("internationalRoming"))));
 		            
-		            System.out.println(prd);
-		            
-		           
-		           
-		            
 		            prdList.add(prd);
 		            
 	            }

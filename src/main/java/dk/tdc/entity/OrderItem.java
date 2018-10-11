@@ -1,8 +1,11 @@
 package dk.tdc.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 @Entity
 public class OrderItem {
@@ -10,13 +13,14 @@ public class OrderItem {
 	
 
 	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long orderItemId;
 	
 	@ManyToOne
 	private Product product;
 	
-	
-	private String mobileNr;
+	@OneToOne
+	private MobileNumber mobileNr;
 	
 	private String simNr;
 	
@@ -36,12 +40,12 @@ public class OrderItem {
 	}
 
 
-	public String getMobileNr() {
+	public MobileNumber getMobileNr() {
 		return mobileNr;
 	}
 
 
-	public void setMobileNr(String mobileNr) {
+	public void setMobileNr(MobileNumber mobileNr) {
 		this.mobileNr = mobileNr;
 	}
 
