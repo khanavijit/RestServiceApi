@@ -1,7 +1,6 @@
 package dk.tdc.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -19,8 +18,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonPointer;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -119,6 +120,7 @@ public class PersonController {
 				ObjectMapper mapper = new ObjectMapper();
 				rootNode = mapper.readTree(reqObject);    
 				JsonPointer valueNodePointer = JsonPointer.compile("/queryResult/fulfillmentMessages/0/text/text");
+//				JsonPointer valueNodePointer = JsonPointer.compile("/queryResult/fulfillmentMessages/0/text");
 				
 //				JSONArray jsonarray = (JSONArray) valueNodePointer.head();
 				
@@ -149,31 +151,61 @@ public class PersonController {
 				    	
 				    	System.out.println("Avijit pointer 3" + fieldValueNode);
 				    	
+				    	
+				    	
+				    	
+				    	
 				    	if (fieldValueNode.isArray()) {
 				    		ArrayNode arrnode=(ArrayNode)fieldValueNode;
 				    		
 				    		arrnode.removeAll();
+				    		arrnode.add("Hi " +person.getFirstName() +" " + person.getLastName() + ", Please Choose Product!");
 				    		
-				    		String resp="{\"speech\":\"~~HH~~\",\"displayText\":\"~~jj~~\",\"source\": \"game schedule\"}";
-
-					    	String hs="Hi " +person.getFirstName() +" " + person.getLastName() + ", Please Choose Product!";
-
-						resp=resp.replace("~~HH~~", hs);
-						resp=resp.replace("~~jj~~", hs);
-						
-						resp=resp.replace("\\", "");
+				    	
 						
 						
-//						JSONObject jsonObj = (JSONObject) parser.parse(resp);
 						
-						System.out.println();
-				    		
-				    		arrnode.add(resp);
-				    		
-						    for (JsonNode objNode : fieldValueNode) {
-						        System.out.println(objNode);
-						    }
+						
+						
 						}
+				    	
+				    	else {/*
+				    		
+				    		 ObjectMapper mapper2a = new ObjectMapper();
+						        ObjectReader reader = mapper2a.reader();
+						        
+
+					    		String resp="{\"speech\":\"~~HH~~\",\"displayText\":\"~~jj~~\",\"source\": \"game schedule\"}";
+
+						    	String hs="Hi " +person.getFirstName() +" " + person.getLastName() + ", Please Choose Product!";
+
+							resp=resp.replace("~~HH~~", hs);
+							resp=resp.replace("~~jj~~", hs);
+//							
+							resp=resp.replace("\\", "");
+							
+							
+//							 String jsonString = "{\"users\" : [{\"id\" : \"1\", \"name\" : \"stanley\", \"age\" : \"28\" }]}";
+						        try {
+						            JsonNode node = reader.readTree(resp);
+						            System.out.println(node.toString());
+						            ObjectNode objectNode = (ObjectNode) node;
+						            objectNode.put("gender", "male");
+						            System.out.println(node.toString());
+						        } catch (JsonProcessingException e) {
+						            e.printStackTrace();
+						        } catch (IOException e) {
+						            e.printStackTrace();
+						        }
+
+				    	*/}
+				    	
+				    	
+				    	
+				    	
+				    	
+				    	
+				    	
 
 				    	String queryResult1=String.valueOf(rootNode.get("queryResult"));
 						
