@@ -3,6 +3,7 @@ package dk.tdc.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,9 +44,12 @@ public class PersonController {
 	}
 	
 	@RequestMapping("/service/cpr/")
-	public Person getPersonByCprNr2(@PathVariable String cprNr){
+	public Person getPersonByCprNr2(HttpEntity<String> httpEntity){
 		
-		return personService.getPersonByCpr(cprNr);
+		 String reqObject = httpEntity.getBody();
+		    System.out.println("request json object = "+reqObject);
+		
+		return personService.getPersonByCpr("0709863896");
 	}
 		
 
