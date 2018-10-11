@@ -41,6 +41,12 @@ public class PersonController {
 		
 		return personService.getPersonByCpr(cprNr);
 	}
+	
+	@RequestMapping("/service/cpr/")
+	public Person getPersonByCprNr2(@PathVariable String cprNr){
+		
+		return personService.getPersonByCpr(cprNr);
+	}
 		
 
 	
