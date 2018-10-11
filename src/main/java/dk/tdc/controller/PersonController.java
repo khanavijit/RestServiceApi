@@ -18,22 +18,33 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonPointer;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import dk.tdc.entity.Order;
+import dk.tdc.entity.OrderItem;
 import dk.tdc.entity.Person;
+import dk.tdc.entity.Product;
+import dk.tdc.requests.CartItem;
 import dk.tdc.requests.PersonRequest;
+import dk.tdc.service.OrderService;
 import dk.tdc.service.PersonService;
+import dk.tdc.service.ProductService;
 
 @RestController
 public class PersonController {
 	
 	@Autowired
 	private PersonService personService;
+	
+	@Autowired
+	private ProductService productService;
+	
+	@Autowired
+	private OrderService orderService;
 	
 	
 	@RequestMapping(value="/service/cpr/load", method = RequestMethod.POST)
@@ -60,6 +71,11 @@ public class PersonController {
 		
 		 	String reqObject = httpEntity.getBody();
 		    String cpr="";
+		    String productType="";
+		    
+		    	    
+		    
+		    String packageId="";
 		    
 			    
 		    
@@ -68,10 +84,11 @@ public class PersonController {
 		    JsonNode rootNode=null;
 		    
 		    
-		    String resp="";
+		    String resp="{\"speech\": \"spoken response\",\"displayText\": \"displayed response\",\"messages\": [{\"speech\": \"Text response\",\"type\": 0}],\"source\": \"example.com\",\"data\": {\"google\": {\"expectUserResponse\": true,\"richResponse\": {\"items\": [{\"simpleResponse\": {\"textToSpeech\": \"this is a simple response\"}}]}},\"facebook\": {\"text\": \"Hello, Facebook!\"},\"slack\": {\"text\": \"This is a text response for Slack.\"}},\"contextOut\": [{\"name\": \"context name\",\"lifespan\": 5,\"parameters\": {\"param\": \"param value\"}}],\"followupEvent\": {\"name\": \"event name\",\"parameters\": {\"param\": \"param value\"}}}";
+
 		    
 		    
-		    
+		    String type="";
 		    
 		    
 			try {
@@ -95,86 +112,321 @@ public class PersonController {
 				
 				cpr=String.valueOf(paramJson.get("cprNr"));
 				
+				productType=String.valueOf(paramJson.get("productType"));				
+				
+				
+				
+				packageId=String.valueOf(paramJson.get("packageId"));
+				
+				if(cpr!=null && !cpr.equalsIgnoreCase("")) {
+					type="CPR";
+				}
+				
+				if(productType!=null && !productType.equalsIgnoreCase("")) {
+					type="PRODTYPE";
+				}
+				
+				if(packageId!=null && !packageId.equalsIgnoreCase("")) {
+					type="ORD";
+				}
+				
 				System.out.println(cpr);
 				
-				Person person = personService.getPersonByCpr(cpr);
-				
-				System.out.println("name " + person.getFirstName());
-				
+				if(type.equalsIgnoreCase("CPR")) {
+					Person person = personService.getPersonByCpr(cpr);
+					
+					System.out.println("name " + person.getFirstName());
+					
 
+					
+					ObjectMapper mapper = new ObjectMapper();
+					rootNode = mapper.readTree(reqObject);    
+					JsonPointer valueNodePointer = JsonPointer.compile("/result/speech");
+//					JsonPointer valueNodePointer = JsonPointer.compile("/queryResult/fulfillmentMessages/0/text");
+					
+//					JSONArray jsonarray = (JSONArray) valueNodePointer.head();
+					
+					System.out.println("Avijit pointer 1" + valueNodePointer);
+					
+					JsonPointer containerPointer = valueNodePointer.head();
+					
+					System.out.println("Avijit pointer 2" + containerPointer);
+					JsonNode parentJsonNode = rootNode.at(containerPointer);
+					
+					System.out.println("Avijit pointer 3" + parentJsonNode);
 				
-				ObjectMapper mapper = new ObjectMapper();
-				rootNode = mapper.readTree(reqObject);    
-				JsonPointer valueNodePointer = JsonPointer.compile("/result/speech");
-//				JsonPointer valueNodePointer = JsonPointer.compile("/queryResult/fulfillmentMessages/0/text");
-				
-//				JSONArray jsonarray = (JSONArray) valueNodePointer.head();
-				
-				System.out.println("Avijit pointer 1" + valueNodePointer);
-				
-				JsonPointer containerPointer = valueNodePointer.head();
-				
-				System.out.println("Avijit pointer 2" + containerPointer);
-				JsonNode parentJsonNode = rootNode.at(containerPointer);
-				
-				System.out.println("Avijit pointer 3" + parentJsonNode);
-			
-				
-				if (!parentJsonNode.isMissingNode() && parentJsonNode.isObject()) {
-				    ObjectNode parentObjectNode = (ObjectNode) parentJsonNode;
-				    //following will give you just the field name. 
-				    //e.g. if pointer is /grandObject/Object/field
-				    //JsonPoint.last() will give you /field 
-				    //remember to take out the / character 
-				    String fieldName = valueNodePointer.last().toString();
-				    fieldName = fieldName.replace(Character.toString(JsonPointer.SEPARATOR), "");
-				    JsonNode fieldValueNode = parentObjectNode.get(fieldName);
+					
+					if (!parentJsonNode.isMissingNode() && parentJsonNode.isObject()) {
+					    ObjectNode parentObjectNode = (ObjectNode) parentJsonNode;
+					    //following will give you just the field name. 
+					    //e.g. if pointer is /grandObject/Object/field
+					    //JsonPoint.last() will give you /field 
+					    //remember to take out the / character 
+					    String fieldName = valueNodePointer.last().toString();
+					    fieldName = fieldName.replace(Character.toString(JsonPointer.SEPARATOR), "");
+					    JsonNode fieldValueNode = parentObjectNode.get(fieldName);
 
-				    if(fieldValueNode != null) {
-				        parentObjectNode.put(fieldName, "HIIIIIIIIIIIIIIIIIIIIIIIIIIi");
-				    }
+					    if(fieldValueNode != null) {
+					        parentObjectNode.put(fieldName, "HIIIIIIIIIIIIIIIIIIIIIIIIIIi");
+					    }
+					}
+					
+					
+					
+					JsonPointer valueNodePointer2 = JsonPointer.compile("/result/fulfillment/speech");
+//					JsonPointer valueNodePointer = JsonPointer.compile("/queryResult/fulfillmentMessages/0/text");
+					
+//					JSONArray jsonarray = (JSONArray) valueNodePointer.head();
+					
+					System.out.println("Avijit pointer 1" + valueNodePointer2);
+					
+					JsonPointer containerPointer2 = valueNodePointer2.head();
+					
+					System.out.println("Avijit pointer 2" + containerPointer2);
+					JsonNode parentJsonNode2 = rootNode.at(containerPointer2);
+					
+					System.out.println("Avijit pointer 3" + parentJsonNode2);
+				
+					
+					if (!parentJsonNode2.isMissingNode() && parentJsonNode2.isObject()) {
+					    ObjectNode parentObjectNode2 = (ObjectNode) parentJsonNode2;
+					    //following will give you just the field name. 
+					    //e.g. if pointer is /grandObject/Object/field
+					    //JsonPoint.last() will give you /field 
+					    //remember to take out the / character 
+					    String fieldName = valueNodePointer2.last().toString();
+					    fieldName = fieldName.replace(Character.toString(JsonPointer.SEPARATOR), "");
+					    JsonNode fieldValueNode = parentObjectNode2.get(fieldName);
+
+					    if(fieldValueNode != null) {
+					        parentObjectNode2.put(fieldName, "HIIIIIIIIIIIIIIIIIITTTTTTTTTTTTTt");
+					    }
+					}
+					
+					
+				
+					    	
+
+					resp=resp.replace("Text response", "Hi " +person.getFirstName() +" " + person.getLastName() + ", Please provide your contact nr. ? ");
+					resp=resp.trim();
+					    	
+				}
+				else if(type.equalsIgnoreCase("PRODTYPE")) {
+					
+
+					List<Product> products = productService.getProductsByPackageType(productType);
+					String prodString="";
+					for(Product product: products) {
+						
+						prodString+=product.getPackageId()+"."+product.getPackageName() +"( "+product.getPrice()+"kr.) ,";
+					}
+					 if (prodString != null && prodString.length() > 1) {
+						 prodString = prodString.substring(0, prodString.length() - 1);
+						 
+						
+						 String toReplace = ",";
+						 String replacement = " and ";
+
+						 int start = prodString.lastIndexOf(toReplace);
+						 
+						 
+						 
+						 
+						 StringBuilder strb=new StringBuilder(prodString);    
+						 int index=strb.lastIndexOf(toReplace);    
+						 strb.replace(index,toReplace.length()+index,replacement);    
+						 prodString= strb.toString();
+						 
+				     }
+					 
+					 
+
+					
+					ObjectMapper mapper = new ObjectMapper();
+					rootNode = mapper.readTree(reqObject);    
+					JsonPointer valueNodePointer = JsonPointer.compile("/result/speech");
+//					JsonPointer valueNodePointer = JsonPointer.compile("/queryResult/fulfillmentMessages/0/text");
+					
+//					JSONArray jsonarray = (JSONArray) valueNodePointer.head();
+					
+					System.out.println("Avijit pointer 1" + valueNodePointer);
+					
+					JsonPointer containerPointer = valueNodePointer.head();
+					
+					System.out.println("Avijit pointer 2" + containerPointer);
+					JsonNode parentJsonNode = rootNode.at(containerPointer);
+					
+					System.out.println("Avijit pointer 3" + parentJsonNode);
+				
+					
+					if (!parentJsonNode.isMissingNode() && parentJsonNode.isObject()) {
+					    ObjectNode parentObjectNode = (ObjectNode) parentJsonNode;
+					    //following will give you just the field name. 
+					    //e.g. if pointer is /grandObject/Object/field
+					    //JsonPoint.last() will give you /field 
+					    //remember to take out the / character 
+					    String fieldName = valueNodePointer.last().toString();
+					    fieldName = fieldName.replace(Character.toString(JsonPointer.SEPARATOR), "");
+					    JsonNode fieldValueNode = parentObjectNode.get(fieldName);
+
+					    if(fieldValueNode != null) {
+					        parentObjectNode.put(fieldName, "HIIIIIIIIIIIIIIIIIIIIIIIIIIi");
+					    }
+					}
+					
+					
+					
+					JsonPointer valueNodePointer2 = JsonPointer.compile("/result/fulfillment/speech");
+//					JsonPointer valueNodePointer = JsonPointer.compile("/queryResult/fulfillmentMessages/0/text");
+					
+//					JSONArray jsonarray = (JSONArray) valueNodePointer.head();
+					
+					System.out.println("Avijit pointer 1" + valueNodePointer2);
+					
+					JsonPointer containerPointer2 = valueNodePointer2.head();
+					
+					System.out.println("Avijit pointer 2" + containerPointer2);
+					JsonNode parentJsonNode2 = rootNode.at(containerPointer2);
+					
+					System.out.println("Avijit pointer 3" + parentJsonNode2);
+				
+					
+					if (!parentJsonNode2.isMissingNode() && parentJsonNode2.isObject()) {
+					    ObjectNode parentObjectNode2 = (ObjectNode) parentJsonNode2;
+					    //following will give you just the field name. 
+					    //e.g. if pointer is /grandObject/Object/field
+					    //JsonPoint.last() will give you /field 
+					    //remember to take out the / character 
+					    String fieldName = valueNodePointer2.last().toString();
+					    fieldName = fieldName.replace(Character.toString(JsonPointer.SEPARATOR), "");
+					    JsonNode fieldValueNode = parentObjectNode2.get(fieldName);
+
+					    if(fieldValueNode != null) {
+					        parentObjectNode2.put(fieldName, "HIIIIIIIIIIIIIIIIIITTTTTTTTTTTTTt");
+					    }
+					}
+					
+					
+				
+					    	
+					
+					resp=resp.replace("Text response", "Please choose among "+prodString);
+					resp=resp.trim();
+					    	
+				
+					
+				}
+				else if(type.equalsIgnoreCase("ORD")) {
+					
+					
+					
+					Order order = new Order();
+					
+					Person person=personService.getPersonByCpr(cpr);
+					
+					
+					
+					if(person==null) {
+						return new ResponseEntity<String>("Order Failed - Invalid Person " , new HttpHeaders(),HttpStatus.NOT_FOUND);
+					}
+					
+					
+					
+						
+						OrderItem orderItem = new OrderItem();
+						Product product=productService.getProductByPackageId(packageId);
+						if(product==null) {
+							return new ResponseEntity<String>("Order Failed - Invalid Product " , new HttpHeaders(),HttpStatus.NOT_FOUND);
+						}
+						
+						orderItem.setProduct(product);
+						order.addOrderItems(orderItem);
+						
+					
+					order.setPerson(person);
+					order.setOrderStatus("Created");
+					
+					String orderNr=orderService.addOrder(order);
+					
+		 
+
+					
+					ObjectMapper mapper = new ObjectMapper();
+					rootNode = mapper.readTree(reqObject);    
+					JsonPointer valueNodePointer = JsonPointer.compile("/result/speech");
+//					JsonPointer valueNodePointer = JsonPointer.compile("/queryResult/fulfillmentMessages/0/text");
+					
+//					JSONArray jsonarray = (JSONArray) valueNodePointer.head();
+					
+					System.out.println("Avijit pointer 1" + valueNodePointer);
+					
+					JsonPointer containerPointer = valueNodePointer.head();
+					
+					System.out.println("Avijit pointer 2" + containerPointer);
+					JsonNode parentJsonNode = rootNode.at(containerPointer);
+					
+					System.out.println("Avijit pointer 3" + parentJsonNode);
+				
+					
+					if (!parentJsonNode.isMissingNode() && parentJsonNode.isObject()) {
+					    ObjectNode parentObjectNode = (ObjectNode) parentJsonNode;
+					    //following will give you just the field name. 
+					    //e.g. if pointer is /grandObject/Object/field
+					    //JsonPoint.last() will give you /field 
+					    //remember to take out the / character 
+					    String fieldName = valueNodePointer.last().toString();
+					    fieldName = fieldName.replace(Character.toString(JsonPointer.SEPARATOR), "");
+					    JsonNode fieldValueNode = parentObjectNode.get(fieldName);
+
+					    if(fieldValueNode != null) {
+					        parentObjectNode.put(fieldName, "HIIIIIIIIIIIIIIIIIIIIIIIIIIi");
+					    }
+					}
+					
+					
+					
+					JsonPointer valueNodePointer2 = JsonPointer.compile("/result/fulfillment/speech");
+//					JsonPointer valueNodePointer = JsonPointer.compile("/queryResult/fulfillmentMessages/0/text");
+					
+//					JSONArray jsonarray = (JSONArray) valueNodePointer.head();
+					
+					System.out.println("Avijit pointer 1" + valueNodePointer2);
+					
+					JsonPointer containerPointer2 = valueNodePointer2.head();
+					
+					System.out.println("Avijit pointer 2" + containerPointer2);
+					JsonNode parentJsonNode2 = rootNode.at(containerPointer2);
+					
+					System.out.println("Avijit pointer 3" + parentJsonNode2);
+				
+					
+					if (!parentJsonNode2.isMissingNode() && parentJsonNode2.isObject()) {
+					    ObjectNode parentObjectNode2 = (ObjectNode) parentJsonNode2;
+					    //following will give you just the field name. 
+					    //e.g. if pointer is /grandObject/Object/field
+					    //JsonPoint.last() will give you /field 
+					    //remember to take out the / character 
+					    String fieldName = valueNodePointer2.last().toString();
+					    fieldName = fieldName.replace(Character.toString(JsonPointer.SEPARATOR), "");
+					    JsonNode fieldValueNode = parentObjectNode2.get(fieldName);
+
+					    if(fieldValueNode != null) {
+					        parentObjectNode2.put(fieldName, "HIIIIIIIIIIIIIIIIIITTTTTTTTTTTTTt");
+					    }
+					}
+					
+					
+				
+					    	
+					
+					resp=resp.replace("Text response", "You order has been successfully created.Your order Nr is : "+orderNr);
+					resp=resp.trim();
+					    	
+				
+					
 				}
 				
 				
-				
-				JsonPointer valueNodePointer2 = JsonPointer.compile("/result/fulfillment/speech");
-//				JsonPointer valueNodePointer = JsonPointer.compile("/queryResult/fulfillmentMessages/0/text");
-				
-//				JSONArray jsonarray = (JSONArray) valueNodePointer.head();
-				
-				System.out.println("Avijit pointer 1" + valueNodePointer2);
-				
-				JsonPointer containerPointer2 = valueNodePointer2.head();
-				
-				System.out.println("Avijit pointer 2" + containerPointer2);
-				JsonNode parentJsonNode2 = rootNode.at(containerPointer2);
-				
-				System.out.println("Avijit pointer 3" + parentJsonNode2);
-			
-				
-				if (!parentJsonNode2.isMissingNode() && parentJsonNode2.isObject()) {
-				    ObjectNode parentObjectNode2 = (ObjectNode) parentJsonNode2;
-				    //following will give you just the field name. 
-				    //e.g. if pointer is /grandObject/Object/field
-				    //JsonPoint.last() will give you /field 
-				    //remember to take out the / character 
-				    String fieldName = valueNodePointer2.last().toString();
-				    fieldName = fieldName.replace(Character.toString(JsonPointer.SEPARATOR), "");
-				    JsonNode fieldValueNode = parentObjectNode2.get(fieldName);
-
-				    if(fieldValueNode != null) {
-				        parentObjectNode2.put(fieldName, "HIIIIIIIIIIIIIIIIIITTTTTTTTTTTTTt");
-				    }
-				}
-				
-				
-			
-				    	
-				resp="{\"speech\": \"spoken response\",\"displayText\": \"displayed response\",\"messages\": [{\"speech\": \"Text response\",\"type\": 0}],\"source\": \"example.com\",\"data\": {\"google\": {\"expectUserResponse\": true,\"richResponse\": {\"items\": [{\"simpleResponse\": {\"textToSpeech\": \"this is a simple response\"}}]}},\"facebook\": {\"text\": \"Hello, Facebook!\"},\"slack\": {\"text\": \"This is a text response for Slack.\"}},\"contextOut\": [{\"name\": \"context name\",\"lifespan\": 5,\"parameters\": {\"param\": \"param value\"}}],\"followupEvent\": {\"name\": \"event name\",\"parameters\": {\"param\": \"param value\"}}}";
-
-				resp=resp.replace("Text response", "Hi " +person.getFirstName() +" " + person.getLastName() + ", Please Choose Product!");
-				resp=resp.trim();
-				    	
 				 
 				
 				

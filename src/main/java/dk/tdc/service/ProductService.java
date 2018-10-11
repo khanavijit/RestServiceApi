@@ -61,7 +61,7 @@ public List<Product> getProductsByPackageType(String packageType){
  		productRepository.findAll().forEach(products::add);
  		
  		List<Product> results = products.stream()                
-                .filter(x -> packageType.equals(x.getPackageType()) )     
+                .filter(x -> packageType.equalsIgnoreCase(x.getPackageType()) )     
                 .collect(Collectors.toList());            	 		
  		
 		
