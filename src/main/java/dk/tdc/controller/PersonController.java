@@ -502,7 +502,7 @@ public class PersonController {
 		    JsonNode rootNode=null;
 		    
 		    
-		    
+		    String resp="{\"fulfillmentText\": \"displayed&spoken response\",\"fulfillmentMessages\": [{\"text\": [\"text response\"]}],\"source\": \"example.com\",\"payload\": {\"google\": {\"expectUserResponse\": true,\"richResponse\": {\"items\": [{\"simpleResponse\": {\"textToSpeech\": \"this is a simple response\"}}]}},\"facebook\": {\"text\": \"Hello, Facebook!\"},\"slack\": {\"text\": \"This is a text response for Slack.\"}},\"outputContexts\": [{\"name\": \"projects/${PROJECT_ID}/agent/sessions/${SESSION_ID}/contexts/context name\",\"lifespanCount\": 5,\"parameters\": {\"param\": \"param value\"}}],\"followupEventInput\": {\"name\": \"event name\",\"languageCode\": \"en-US\",\"parameters\": {\"param\": \"param value\"}}}";
 		    
 		    
 		    
@@ -665,21 +665,10 @@ public class PersonController {
 		 
 			String tst="{\"allRequiredParamsPresent\":true,\"fulfillmentMessages\":";
 		
-			String resp="{\"fulfillmentText\": \"This is a text response\",\"fulfillmentMessages\": [{\"card\": {\"title\": \"card title\",\"subtitle\": \"card text\",\"imageUri\": \"Molecule-Formation-stop.png\",\"buttons\": [{\"text\": \"button text\"}]}}],\"source\": \"example.com\",\"payload\": {\"google\": {\"expectUserResponse\": true,\"richResponse\": {\"items\": [{\"simpleResponse\": {\"textToSpeech\": \"this is a simple response\"}}]}},\"facebook\": {\"text\": \"Hello, Facebook!\"},\"slack\": {\"text\": \"This is a text response for Slack.\"}},\"outputContexts\": [{\"name\": \"projects/${PROJECT_ID}/agent/sessions/${SESSION_ID}/contexts/context name\",\"lifespanCount\": 5,\"parameters\": {\"param\": \"param value\"}}],\"followupEventInput\": {\"name\": \"event name\",\"languageCode\": \"en-US\",\"parameters\": {\"param\": \"param value\"}}}";
+//			String resp="{\"fulfillmentText\": \"This is a text response\",\"fulfillmentMessages\": [{\"card\": {\"title\": \"card title\",\"subtitle\": \"card text\",\"imageUri\": \"Molecule-Formation-stop.png\",\"buttons\": [{\"text\": \"button text\"}]}}],\"source\": \"example.com\",\"payload\": {\"google\": {\"expectUserResponse\": true,\"richResponse\": {\"items\": [{\"simpleResponse\": {\"textToSpeech\": \"this is a simple response\"}}]}},\"facebook\": {\"text\": \"Hello, Facebook!\"},\"slack\": {\"text\": \"This is a text response for Slack.\"}},\"outputContexts\": [{\"name\": \"projects/${PROJECT_ID}/agent/sessions/${SESSION_ID}/contexts/context name\",\"lifespanCount\": 5,\"parameters\": {\"param\": \"param value\"}}],\"followupEventInput\": {\"name\": \"event name\",\"languageCode\": \"en-US\",\"parameters\": {\"param\": \"param value\"}}}";
 
 			resp=resp.trim();
-			 ObjectMapper mapper2a = new ObjectMapper();
-		    ObjectReader reader = mapper2a.reader();
-		        
 			
-			  JsonNode node=null;
-			try {
-				node = reader.readTree(resp);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	            System.out.println(node.toString());
 
 			return new ResponseEntity<String>(resp, new HttpHeaders(),HttpStatus.OK);
 	}
