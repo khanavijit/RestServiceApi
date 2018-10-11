@@ -109,12 +109,12 @@ public class PersonController {
 				
 				Person person = personService.getPersonByCpr(cpr);
 				
-				/*System.out.println("name " + person.getFirstName());
+				System.out.println("name " + person.getFirstName());
 				
 
 				
-				ObjectMapper mapper = new ObjectMapper(); 
-				JsonNode node = mapper.convertValue(qResult, JsonNode.class);
+				ObjectMapper mapper0 = new ObjectMapper(); 
+				JsonNode node = mapper0.convertValue(qResult, JsonNode.class);
 				
 				System.out.println(qResult);
 				
@@ -123,7 +123,7 @@ public class PersonController {
 				
 //				qResult.replace("fulfillmentText", person.getFirstName() + " " + person.getLastName());
 				
-				System.out.println(qResult);*/
+				System.out.println(qResult);
 				
 				
 				
