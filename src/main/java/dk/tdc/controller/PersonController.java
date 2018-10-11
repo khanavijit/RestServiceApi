@@ -69,13 +69,16 @@ public class PersonController {
 	@RequestMapping(value="/service/cpr1/", method = RequestMethod.POST)
 	public ResponseEntity<String> getPersonByCprNr1(HttpEntity<String> httpEntity){
 		
+		
+		System.out.println("Method CER 1");
+		
 		 	String reqObject = httpEntity.getBody();
 		    String cpr="";
-		    String productType="";
+		    String productType=null;
 		    
 		    	    
 		    
-		    String packageId="";
+		    String packageId=null;
 		    
 			    
 		    
@@ -114,23 +117,33 @@ public class PersonController {
 				
 				productType=String.valueOf(paramJson.get("productType"));				
 				
-				
+				System.out.println("Type1 "+type);
 				
 				packageId=String.valueOf(paramJson.get("packageId"));
+				
+				
+				
+				System.out.println("cpr" + cpr);
+				System.out.println("productType" + productType);
+				System.out.println("packageId" + packageId);
 				
 				if(cpr!=null && !cpr.equalsIgnoreCase("")) {
 					type="CPR";
 				}
+				System.out.println("Type 2"+type);
 				
-				if(productType!=null && !productType.equalsIgnoreCase("")) {
+				if(productType != null && ( productType.equalsIgnoreCase("voice") || productType.equalsIgnoreCase("data") ||  productType.equalsIgnoreCase("bundle")) ) {
+					System.out.println("Inside Prodtype");
 					type="PRODTYPE";
 				}
-				
-				if(packageId!=null && !packageId.equalsIgnoreCase("")) {
+//				System.out.println("Type 3: "+type + packageId!=null + ""+ !packageId.equalsIgnoreCase("") );
+				System.out.println("Type 3"+type);
+				if(packageId !=null && packageId.equalsIgnoreCase("2")) {
 					type="ORD";
 				}
+				System.out.println("Type 4"+type);
 				
-				System.out.println(cpr);
+				System.out.println(cpr + type + packageId + productType);
 				
 				if(type.equalsIgnoreCase("CPR")) {
 					Person person = personService.getPersonByCpr(cpr);
