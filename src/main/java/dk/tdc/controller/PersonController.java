@@ -1,6 +1,7 @@
 package dk.tdc.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -11,7 +12,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import dk.tdc.entity.Person;
@@ -60,10 +61,37 @@ public class PersonController {
 //		    System.out.println("request json object = "+reqObject);
 		    String cpr="";
 		    
+		    
+		    
+		    
+		    
+//		    ObjectMapper mapper2 = new ObjectMapper();
+
+		    
+		   
+		    
+		    
+		    
+		    
 		    JSONParser parser = new JSONParser();
 		    JSONObject mainReq;
 		    JsonNode rootNode=null;
+		    
+		    
+		    
+		    
+		    
+		    
+		    
+		    
 			try {
+				/*mapper2.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+				
+				 CprRequest obj = mapper2.readValue(reqObject, CprRequest.class);*/
+				    
+//				    System.out.println("JSON OBJECT " + obj);
+				
+				
 				mainReq = (JSONObject) parser.parse(reqObject);
 //				System.out.println(mainReq);
 				
@@ -101,20 +129,56 @@ public class PersonController {
 				
 				ObjectMapper mapper = new ObjectMapper();
 				rootNode = mapper.readTree(reqObject);    
-				JsonPointer valueNodePointer = JsonPointer.compile("/queryResult/fulfillmentText");
+				JsonPointer valueNodePointer = JsonPointer.compile("/queryResult/fulfillmentMessages/0/text/text");
+				
+//				JSONArray jsonarray = (JSONArray) valueNodePointer.head();
+				
+				System.out.println("Avijit pointer 1" + valueNodePointer);
+				
 				JsonPointer containerPointer = valueNodePointer.head();
+				
+				System.out.println("Avijit pointer 2" + containerPointer);
 				JsonNode parentJsonNode = rootNode.at(containerPointer);
+				
+				System.out.println("Avijit pointer 3" + parentJsonNode);
 
 				if (!parentJsonNode.isMissingNode() && parentJsonNode.isObject()) {
+					
+					
+					
 				    ObjectNode parentObjectNode = (ObjectNode) parentJsonNode;
 				   
 				    String fieldName = valueNodePointer.last().toString();
 				    fieldName = fieldName.replace(Character.toString(JsonPointer.SEPARATOR), "");
 				    JsonNode fieldValueNode = parentObjectNode.get(fieldName);
+				    
+				    List<String> msg= new ArrayList<String>();
+				    
+				    msg.add("Hi " +person.getFirstName() +" " + person.getLastName() + ", Please Choose Product!");
 
 				    if(fieldValueNode != null) {
-				        parentObjectNode.put(fieldName, "Hi " +person.getFirstName() +" " + person.getLastName() + ", Please Choose Product!");
-				    }
+				    	
+				    	System.out.println("Avijit pointer 3" + fieldValueNode);
+				    	
+				    	if (fieldValueNode.isArray()) {
+				    		ArrayNode arrnode=(ArrayNode)fieldValueNode;
+				    		
+				    		arrnode.removeAll();
+				    		arrnode.add("Hi " +person.getFirstName() +" " + person.getLastName() + ", Please Choose Product!");
+				    		
+						    for (JsonNode objNode : fieldValueNode) {
+						        System.out.println(objNode);
+						    }
+						}
+				    	
+				    	ObjectMapper mapper3 = new ObjectMapper();
+				    	ArrayNode array = mapper3.valueToTree(msg);
+				    	
+				    	JsonNode result =array;
+				    	
+				    	
+				    	
+				    					    }
 				}
 				
 				
