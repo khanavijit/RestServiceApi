@@ -11,20 +11,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class test {
 
 	public static void main(String[] args) {
-		 ObjectMapper mapper = new ObjectMapper();
-	        ObjectReader reader = mapper.reader();
-	        String jsonString = "{\"users\" : [{\"id\" : \"1\", \"name\" : \"stanley\", \"age\" : \"28\" }]}";
-	        try {
-	            JsonNode node = reader.readTree(jsonString);
-	            System.out.println(node.toString());
-	            ObjectNode objectNode = (ObjectNode) node;
-	            objectNode.put("gender", "male");
-	            System.out.println(node.toString());
-	        } catch (JsonProcessingException e) {
-	            e.printStackTrace();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
+		String resp="{\"speech\": \"spoken response\",\"displayText\": \"displayed response\",\"messages\": [{\"speech\": \"~~TXT~~~\",\"type\": 0}],\"source\": \"example.com\",\"data\": {\"google\": {\"expectUserResponse\": true,\"richResponse\": {\"items\": [{\"simpleResponse\": {\"textToSpeech\": \"this is a simple response\"}}]}},\"facebook\": {\"text\": \"Hello, Facebook!\"},\"slack\": {\"text\": \"This is a text response for Slack.\"}},\"contextOut\": [{\"name\": \"context name\",\"lifespan\": 5,\"parameters\": {\"param\": \"param value\"}}],\"followupEvent\": {\"name\": \"event name\",\"parameters\": {\"param\": \"param value\"}}}";
+
+		resp=resp.replace("~~TXT~~~", "Hi ");
+		resp=resp.trim();
+		  
+		System.out.println(resp);
 		
 
 	}

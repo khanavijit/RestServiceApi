@@ -172,7 +172,7 @@ public class PersonController {
 				    	
 				resp="{\"speech\": \"spoken response\",\"displayText\": \"displayed response\",\"messages\": [{\"speech\": \"Text response\",\"type\": 0}],\"source\": \"example.com\",\"data\": {\"google\": {\"expectUserResponse\": true,\"richResponse\": {\"items\": [{\"simpleResponse\": {\"textToSpeech\": \"this is a simple response\"}}]}},\"facebook\": {\"text\": \"Hello, Facebook!\"},\"slack\": {\"text\": \"This is a text response for Slack.\"}},\"contextOut\": [{\"name\": \"context name\",\"lifespan\": 5,\"parameters\": {\"param\": \"param value\"}}],\"followupEvent\": {\"name\": \"event name\",\"parameters\": {\"param\": \"param value\"}}}";
 
-				resp.replace("Text response", "Hi " +person.getFirstName() +" " + person.getLastName() + ", Please Choose Product!");
+				resp=resp.replace("Text response", "Hi " +person.getFirstName() +" " + person.getLastName() + ", Please Choose Product!");
 				resp=resp.trim();
 				    	
 				 
