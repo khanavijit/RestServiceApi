@@ -135,6 +135,39 @@ public class PersonController {
 				    }
 				}
 				
+				
+				
+				JsonPointer valueNodePointer2 = JsonPointer.compile("/result/fulfillment/speech");
+//				JsonPointer valueNodePointer = JsonPointer.compile("/queryResult/fulfillmentMessages/0/text");
+				
+//				JSONArray jsonarray = (JSONArray) valueNodePointer.head();
+				
+				System.out.println("Avijit pointer 1" + valueNodePointer2);
+				
+				JsonPointer containerPointer2 = valueNodePointer2.head();
+				
+				System.out.println("Avijit pointer 2" + containerPointer2);
+				JsonNode parentJsonNode2 = rootNode.at(containerPointer2);
+				
+				System.out.println("Avijit pointer 3" + parentJsonNode2);
+			
+				
+				if (!parentJsonNode2.isMissingNode() && parentJsonNode2.isObject()) {
+				    ObjectNode parentObjectNode2 = (ObjectNode) parentJsonNode2;
+				    //following will give you just the field name. 
+				    //e.g. if pointer is /grandObject/Object/field
+				    //JsonPoint.last() will give you /field 
+				    //remember to take out the / character 
+				    String fieldName = valueNodePointer2.last().toString();
+				    fieldName = fieldName.replace(Character.toString(JsonPointer.SEPARATOR), "");
+				    JsonNode fieldValueNode = parentObjectNode2.get(fieldName);
+
+				    if(fieldValueNode != null) {
+				        parentObjectNode2.put(fieldName, "HIIIIIIIIIIIIIIIIIITTTTTTTTTTTTTt");
+				    }
+				}
+				
+				
 			
 				    	
 				    	
