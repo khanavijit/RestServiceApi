@@ -141,9 +141,9 @@ public class PersonController {
 				    fieldName = fieldName.replace(Character.toString(JsonPointer.SEPARATOR), "");
 				    JsonNode fieldValueNode = parentObjectNode.get(fieldName);
 				    
-				    List<String> msg= new ArrayList<String>();
 				    
-				    msg.add("Hi " +person.getFirstName() +" " + person.getLastName() + ", Please Choose Product!");
+				    
+				   
 
 				    if(fieldValueNode != null) {
 				    	
@@ -153,7 +153,22 @@ public class PersonController {
 				    		ArrayNode arrnode=(ArrayNode)fieldValueNode;
 				    		
 				    		arrnode.removeAll();
-				    		arrnode.add("Hi " +person.getFirstName() +" " + person.getLastName() + ", Please Choose Product!");
+				    		
+				    		String resp="{\"speech\":\"~~HH~~\",\"displayText\":\"~~jj~~\",\"source\": \"game schedule\"}";
+
+					    	String hs="Hi " +person.getFirstName() +" " + person.getLastName() + ", Please Choose Product!";
+
+						resp=resp.replace("~~HH~~", hs);
+						resp=resp.replace("~~jj~~", hs);
+						
+						resp=resp.replace("\\", "");
+						
+						
+//						JSONObject jsonObj = (JSONObject) parser.parse(resp);
+						
+						System.out.println();
+				    		
+				    		arrnode.add(resp);
 				    		
 						    for (JsonNode objNode : fieldValueNode) {
 						        System.out.println(objNode);
@@ -199,7 +214,7 @@ public class PersonController {
 
 
 
-			return new ResponseEntity<String>(resp, new HttpHeaders(),HttpStatus.OK);
+			return new ResponseEntity<String>(rootNode.toString(), new HttpHeaders(),HttpStatus.OK);
 	}
 		
 
