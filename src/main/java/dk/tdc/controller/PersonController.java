@@ -502,14 +502,20 @@ public class PersonController {
 		    JsonNode rootNode=null;
 		    
 		    
+		    String respId="";
+		    String outputcnxt="";
+		    String inttent="";
+		    String session="";
+		    
+		    
 //		    String resp="{\"fulfillmentText\": \"displayed&spoken response\",\"fulfillmentMessages\": [{\"text\": [\"text response\"]}],\"source\": \"example.com\",\"payload\": {\"google\": {\"expectUserResponse\": true,\"richResponse\": {\"items\": [{\"simpleResponse\": {\"textToSpeech\": \"this is a simple response\"}}]}},\"facebook\": {\"text\": \"Hello, Facebook!\"},\"slack\": {\"text\": \"This is a text response for Slack.\"}},\"outputContexts\": [{\"name\": \"projects/${PROJECT_ID}/agent/sessions/${SESSION_ID}/contexts/context name\",\"lifespanCount\": 5,\"parameters\": {\"param\": \"param value\"}}],\"followupEventInput\": {\"name\": \"event name\",\"languageCode\": \"en-US\",\"parameters\": {\"param\": \"param value\"}}}";
 		    
 //		    String resp="{  \"fulfillmentText\": \"displayed&spoken response\",  \"fulfillmentMessages\": [    {      \"text\": {        \"text\": [          \"Text defined in Dialogflow's console for the intent that was matched\"        ]      }    }  ],  \"source\": \"example.com\",  \"payload\": {    \"google\": {      \"expectUserResponse\": true,      \"richResponse\": {        \"items\": [          {            \"simpleResponse\": {              \"textToSpeech\": \"this is a simple response\"            }          }        ]      }    },    \"facebook\": {      \"text\": \"Hello, Facebook!\"    },    \"slack\": {      \"text\": \"This is a text response for Slack.\"    }  },  \"outputContexts\": [    {      \"name\": \"projects/${PROJECT_ID}/agent/sessions/${SESSION_ID}/contexts/context name\",      \"lifespanCount\": 5,      \"parameters\": {        \"param\": \"param value\"      }    }  ],  \"followupEventInput\": {    \"name\": \"event name\",    \"languageCode\": \"en-US\",    \"parameters\": {      \"param\": \"param value\"    }  }}";
 		    
-		    String resp="{  \"fulfillmentText\": \"displayed&spoken response\",  \"fulfillmentMessages\": [    {   \"platform\": \"ACTIONS_ON_GOOGLE\",   \"text\": {        \"text\":     [      \"Text defined in Dialogflow's console for the intent that was matched\"     ]        }    }  ],  \"source\": \"example.com\",  \"payload\": {    \"google\": {      \"expectUserResponse\": true,      \"richResponse\": {        \"items\": [          {            \"simpleResponse\": {              \"textToSpeech\": \"this is a simple response\"            }          }        ]      }    },    \"facebook\": {      \"text\": \"Hello, Facebook!\"    },    \"slack\": {      \"text\": \"This is a text response for Slack.\"    }  },  \"outputContexts\": [    {      \"name\": \"projects/${PROJECT_ID}/agent/sessions/${SESSION_ID}/contexts/context name\",      \"lifespanCount\": 5,      \"parameters\": {        \"param\": \"param value\"      }    }  ],  \"followupEventInput\": {    \"name\": \"event name\",    \"languageCode\": \"en-US\",    \"parameters\": {      \"param\": \"param value\"    }  }}";
+//		    String resp="{  \"fulfillmentText\": \"displayedspoken response\",  \"fulfillmentMessages\": [    {   \"platform\": \"ACTIONS_ON_GOOGLE\",   \"text\": {        \"text\":     [      \"Text defined in Dialogflow's console for the intent that was matched\"     ]        }    }  ],  \"source\": \"example.com\",  \"payload\": {    \"google\": {      \"expectUserResponse\": true,      \"richResponse\": {        \"items\": [          {            \"simpleResponse\": {              \"textToSpeech\": \"this is a simple response\"            }          }        ]      }    },    \"facebook\": {      \"text\": \"Hello, Facebook!\"    },    \"slack\": {      \"text\": \"This is a text response for Slack.\"    }  },  \"outputContexts\": [    {      \"name\": \"projects/${PROJECT_ID}/agent/sessions/${SESSION_ID}/contexts/context name\",      \"lifespanCount\": 5,      \"parameters\": {        \"param\": \"param value\"      }    }  ],  \"followupEventInput\": {    \"name\": \"event name\",    \"languageCode\": \"en-US\",    \"parameters\": {      \"param\": \"param value\"    }  }}";
 		    
 			   
-		    
+		    String resp="{  \"responseId\": \"~~RESPID~~\",  \"queryResult\": {    \"queryText\": \"0709863896\",    \"action\": \"cprCapture\",    \"parameters\": {      \"cprNr\": \"0709863896\"    },    \"allRequiredParamsPresent\": true,    \"fulfillmentText\": \"~~MSG~~\",    \"fulfillmentMessages\": [      {        \"text\": {          \"text\": [            \"~~MSG~~\"          ]        }      }    ],    \"outputContexts\": ~~OUTPUTCNXT~~,    \"intent\": ~~INTNAME~~,    \"intentDetectionConfidence\": 1,    \"languageCode\": \"en\"  },  \"originalDetectIntentRequest\": {    \"payload\": {}  },  \"session\": \"~~SESSION~~\"}";
 		    
 		    
 			try {
@@ -523,6 +529,10 @@ public class PersonController {
 				mainReq = (JSONObject) parser.parse(reqObject);
 //				System.out.println(mainReq);
 				
+				respId=String.valueOf(mainReq.get("responseId"));
+				
+				session=String.valueOf(mainReq.get("session"));
+				
 				String queryResult=String.valueOf(mainReq.get("queryResult"));
 				
 				 JSONObject qResult = (JSONObject) parser.parse(queryResult);
@@ -531,9 +541,22 @@ public class PersonController {
 				
 				JSONObject paramJson = (JSONObject) parser.parse(param);
 				
+				
+				outputcnxt=String.valueOf(qResult.get("outputContexts"));
+				
+				inttent=String.valueOf(qResult.get("intent"));
+				
+				
+				
+				
 				cpr=String.valueOf(paramJson.get("cprNr"));
 				
 				System.out.println(cpr);
+				
+				System.out.println(outputcnxt);
+				System.out.println(inttent);
+				
+				System.out.println(session);
 				
 				Person person = personService.getPersonByCpr(cpr);
 				
@@ -657,7 +680,7 @@ public class PersonController {
 				
 				
 				System.out.println(rootNode);
-				
+				resp=resp.replace("~~MSG~~", "Hi " +person.getFirstName() +" " + person.getLastName() + ", Please Choose Product!");
 				
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
@@ -667,10 +690,18 @@ public class PersonController {
 				e.printStackTrace();
 			}
 		 
-			String tst="{\"allRequiredParamsPresent\":true,\"fulfillmentMessages\":";
 		
 //			String resp="{\"fulfillmentText\": \"This is a text response\",\"fulfillmentMessages\": [{\"card\": {\"title\": \"card title\",\"subtitle\": \"card text\",\"imageUri\": \"Molecule-Formation-stop.png\",\"buttons\": [{\"text\": \"button text\"}]}}],\"source\": \"example.com\",\"payload\": {\"google\": {\"expectUserResponse\": true,\"richResponse\": {\"items\": [{\"simpleResponse\": {\"textToSpeech\": \"this is a simple response\"}}]}},\"facebook\": {\"text\": \"Hello, Facebook!\"},\"slack\": {\"text\": \"This is a text response for Slack.\"}},\"outputContexts\": [{\"name\": \"projects/${PROJECT_ID}/agent/sessions/${SESSION_ID}/contexts/context name\",\"lifespanCount\": 5,\"parameters\": {\"param\": \"param value\"}}],\"followupEventInput\": {\"name\": \"event name\",\"languageCode\": \"en-US\",\"parameters\": {\"param\": \"param value\"}}}";
 
+			resp=resp.replace("~~RESPID~~", respId);
+			
+			resp=resp.replace("~~OUTPUTCNXT~~", outputcnxt);
+			
+			resp=resp.replace("~~INTNAME~~", inttent);
+			
+			resp=resp.replace("~~MSG~~", respId);
+			
+			resp=resp.replace("~~SESSION~~", session);
 			resp=resp.trim();
 			
 
